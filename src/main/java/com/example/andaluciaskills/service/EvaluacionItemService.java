@@ -1,5 +1,7 @@
 package com.example.andaluciaskills.service;
 
+import com.example.andaluciaskills.dto.EvaluacionItemDTO;
+import com.example.andaluciaskills.mapper.EvaluacionItemMapper;
 import com.example.andaluciaskills.model.EvaluacionItem;
 import com.example.andaluciaskills.repository.EvaluacionItemRepository;
 import com.example.andaluciaskills.service.base.EvaluacionItemServiceBase;
@@ -7,29 +9,37 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EvaluacionItemService implements EvaluacionItemServiceBase {
 
     private final EvaluacionItemRepository evaluacionItemRepository;
+    private final EvaluacionItemMapper evaluacionItemMapper;
 
-    public EvaluacionItemService(EvaluacionItemRepository evaluacionItemRepository) {
+    public EvaluacionItemService(EvaluacionItemRepository evaluacionItemRepository, EvaluacionItemMapper evaluacionItemMapper) {
         this.evaluacionItemRepository = evaluacionItemRepository;
+        this.evaluacionItemMapper = evaluacionItemMapper;
     }
 
     @Override
-    public List<EvaluacionItem> obtenerTodos() {
-        return evaluacionItemRepository.findAll();
+    public List<EvaluacionItemDTO> obtenerTodos() {
+        return evaluacionItemRepository.findAll().stream()
+                .map(evaluacionItemMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<EvaluacionItem> obtenerPorId(Integer id) {
-        return evaluacionItemRepository.findById(id);
+    public Optional<EvaluacionItemDTO> obtenerPorId(Integer id) {
+        return evaluacionItemRepository.findById(id)
+                .map(evaluacionItemMapper::toDTO);
     }
 
     @Override
-    public EvaluacionItem agregarEvaluacionItem(EvaluacionItem evaluacionItem) {
-        return evaluacionItemRepository.save(evaluacionItem);
+    public EvaluacionItemDTO agregarEvaluacionItem(EvaluacionItemDTO evaluacionItemDTO) {
+        EvaluacionItem evaluacionItem = evaluacionItemMapper.toEntity(evaluacionItemDTO);
+        EvaluacionItem evaluacionItemGuardado = evaluacionItemRepository.save(evaluacionItem);
+        return evaluacionItemMapper.toDTO(evaluacionItemGuardado);
     }
 
     @Override

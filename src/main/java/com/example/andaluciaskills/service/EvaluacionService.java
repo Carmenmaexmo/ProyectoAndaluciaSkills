@@ -1,5 +1,7 @@
 package com.example.andaluciaskills.service;
 
+import com.example.andaluciaskills.dto.EvaluacionDTO;
+import com.example.andaluciaskills.mapper.EvaluacionMapper;
 import com.example.andaluciaskills.model.Evaluacion;
 import com.example.andaluciaskills.repository.EvaluacionRepository;
 import com.example.andaluciaskills.service.base.EvaluacionServiceBase;
@@ -7,29 +9,37 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EvaluacionService implements EvaluacionServiceBase {
 
     private final EvaluacionRepository evaluacionRepository;
+    private final EvaluacionMapper evaluacionMapper;
 
-    public EvaluacionService(EvaluacionRepository evaluacionRepository) {
+    public EvaluacionService(EvaluacionRepository evaluacionRepository, EvaluacionMapper evaluacionMapper) {
         this.evaluacionRepository = evaluacionRepository;
+        this.evaluacionMapper = evaluacionMapper;
     }
 
     @Override
-    public List<Evaluacion> obtenerTodas() {
-        return evaluacionRepository.findAll();
+    public List<EvaluacionDTO> obtenerTodas() {
+        return evaluacionRepository.findAll().stream()
+                .map(evaluacionMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Evaluacion> obtenerPorId(Integer id) {
-        return evaluacionRepository.findById(id);
+    public Optional<EvaluacionDTO> obtenerPorId(Integer id) {
+        return evaluacionRepository.findById(id)
+                .map(evaluacionMapper::toDTO);
     }
 
     @Override
-    public Evaluacion agregarEvaluacion(Evaluacion evaluacion) {
-        return evaluacionRepository.save(evaluacion);
+    public EvaluacionDTO agregarEvaluacion(EvaluacionDTO evaluacionDTO) {
+        Evaluacion evaluacion = evaluacionMapper.toEntity(evaluacionDTO);
+        Evaluacion evaluacionGuardada = evaluacionRepository.save(evaluacion);
+        return evaluacionMapper.toDTO(evaluacionGuardada);
     }
 
     @Override

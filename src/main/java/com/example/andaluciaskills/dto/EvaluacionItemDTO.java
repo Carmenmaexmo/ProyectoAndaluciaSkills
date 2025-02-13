@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter @Setter
 public class EvaluacionItemDTO {
     private Integer idEvaluacionItem;
-    private Double puntuacion;
+    private Integer valoracion;
     private Integer evaluacionId;
     private Integer itemId;
 }
