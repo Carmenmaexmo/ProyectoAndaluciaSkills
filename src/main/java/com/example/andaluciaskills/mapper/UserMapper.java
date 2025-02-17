@@ -66,6 +66,9 @@ public class UserMapper implements GenericMapper<User, UserDTO> {
         dto.setPassword(entity.getPassword());
         dto.setRole(entity.getRole());
         dto.setEspecialidadId(entity.getEspecialidad().getIdEspecialidad());
+        dto.setDni(entity.getDni());
+        dto.setApellidos(entity.getApellidos());
+        dto.setNombre(entity.getNombre());
         return dto;
     }
 
@@ -77,6 +80,9 @@ public class UserMapper implements GenericMapper<User, UserDTO> {
         entity.setUsername(dto.getUsername());
         entity.setPassword(dto.getPassword());
         entity.setRole(dto.getRole());
+        entity.setDni(dto.getDni());
+        entity.setApellidos(dto.getApellidos());
+        entity.setNombre(dto.getNombre());
         // Aquí necesitarás obtener la entidad relacionada (Especialidad) desde su repositorio
         return entity;
     }
